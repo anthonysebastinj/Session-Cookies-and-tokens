@@ -7,16 +7,22 @@ import dotenv from 'dotenv';
 import crypto from 'crypto';
 import authRoutes from './authRoutes.js';
 
-dotenv.config();
+dotenv.config(); // Load .env variables at the very beginning
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI; // Get MongoDB URI from .env
+
+if (!MONGODB_URI) {
+  console.error("❌ ERROR: MONGODB_URI is undefined. Check your .env file.");
+  process.exit(1);
+}
 
 // Generate a random session secret
 const session_secret = crypto.randomBytes(32).toString("hex");
 
 app.use(express.json());
-app.use(cors({ credentials: true, origin: "http://localhost:5173" })); // Allow frontend requests
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(cookieParser());
 
 // Configure session
@@ -30,9 +36,12 @@ app.use(session({
 // Use Routes
 app.use("/api/user", authRoutes);
 
-// Connect to MongoDB
-mongoose.connect("mongodb+srv://sebastinjs6262:Ka09hw6262@scholarsync.w9fw6.mongodb.net/scholarsync")
-  .then(() => console.log("Connected to MongoDB"))
-  .catch(err => console.error("MongoDB connection error:", err));
+// Connect to MongoDB using the .env variable
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch(err => console.error("❌ MongoDB connection error:", err));
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
