@@ -13,11 +13,6 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI; // Get MongoDB URI from .env
 
-if (!MONGODB_URI) {
-  console.error("❌ ERROR: MONGODB_URI is undefined. Check your .env file.");
-  process.exit(1);
-}
-
 // Generate a random session secret
 const session_secret = crypto.randomBytes(32).toString("hex");
 
@@ -41,7 +36,7 @@ mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch(err => console.error("❌ MongoDB connection error:", err));
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.error("MongoDB connection error:", err));
 
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
